@@ -1,0 +1,150 @@
+#:import Window kivy.core.window.Window
+#:import HuxRecycleView scrollable.recycleview.HuxRecycleView
+#:import Clock kivy.clock.Clock
+
+# Global window background (iOS Light Mode System Background)
+<IconList>:
+    canvas.before:
+        Color:
+            rgba: 0.949, 0.949, 0.968, 1  # #F2F2F7 (iOS Light Gray)
+        Rectangle:
+            pos: self.pos
+            size: self.size
+
+<IconRow>:
+    orientation: "horizontal"
+    size_hint_y: None
+    height: dp(72)
+    padding: [dp(16), dp(8), dp(16), dp(8)]
+    spacing: dp(16)
+
+    # Soft White Card Container background with smooth rounded corners
+    canvas.before:
+        Color:
+            rgba: 1, 1, 1, 1  # Pure White Card
+        RoundedRectangle:
+            pos: self.pos[0] + dp(12), self.pos[1] + dp(2)
+            size: self.size[0] - dp(24), self.size[1] - dp(4)
+            radius: [dp(14),]
+        Color:
+            rgba: 0.9, 0.9, 0.92, 0.6  # Soft Subtle Separator
+        Line:
+            rounded_rectangle: (self.pos[0] + dp(12), self.pos[1] + dp(2), self.size[0] - dp(24), self.size[1] - dp(4), dp(14))
+            width: 0.6
+
+    # Icon Container
+    Label:
+        text: root.icon
+        font_name: root.ttf_path
+        font_size: dp(32)
+        color: 0.0, 0.478, 1.0, 1  # iOS System Blue Tint (#007AFF)
+        size_hint_x: None
+        width: dp(48)
+        halign: "center"
+        valign: "middle"
+
+    # Label Text Container
+    BoxLayout:
+        orientation: "vertical"
+        spacing: dp(2)
+        padding: [0, dp(4), 0, dp(4)]
+
+        Label:
+            text: root.name
+            font_size: dp(16)
+            bold: True
+            color: 0.11, 0.11, 0.12, 1  # Near Black
+            halign: "left"
+            valign: "middle"
+            text_size: self.size
+
+        Label:
+            text: root.unicode_value
+            font_size: dp(13)
+            color: 0.556, 0.556, 0.576, 1  # iOS Secondary Label Gray (#8E8E93)
+            halign: "left"
+            valign: "middle"
+            text_size: self.size
+
+
+<SearchBarContainer>:
+    orientation: "horizontal"
+    size_hint_y: None
+    height: dp(44)
+    padding: [dp(12), 0, dp(12), 0]
+    spacing: dp(8)
+    canvas.before:
+        Color:
+            rgba: (0.98, 0.98, 1.0, 1) if root.is_focused else (1,1,1,1)
+        RoundedRectangle:
+            pos: self.pos
+            size: self.size
+            radius: [dp(12),]
+        Color:
+            rgba: (0.0, 0.478, 1.0, 0.4) if root.is_focused else (0, 0, 0, 0)
+        Line:
+            rounded_rectangle: (self.pos[0], self.pos[1], self.size[0], self.size[1], dp(12))
+            width: 1.1
+
+
+<IconList>:
+    orientation: "vertical"
+    padding: [dp(0), dp(12), dp(0), dp(0)]
+    spacing: dp(8)
+
+    # iOS Search Bar Wrapper
+    AnchorLayout:
+        size_hint_y: None
+        height: dp(46)
+        padding: [dp(16), 0, dp(16), 0]
+
+        # Search Bar Capsule Container
+        SearchBarContainer:
+            id: search_container
+
+            # Search Magnifying Glass Icon (Uses app.font_name)
+            Label:
+                text: f"search"
+                font_name: app.font_name
+                font_size: dp(20)
+                color: 0.556, 0.556, 0.576, 0.75
+                size_hint_x: None
+                width: dp(24)
+                halign: "center"
+                valign: "middle"
+
+            # Plain Text Input (Uses default system font for typed text)
+            TextInput:
+                id: search_input
+                hint_text: "Search Icon..."
+                hint_text_color: 0.556, 0.556, 0.576, 0.75
+                font_size: dp(15)
+                cursor_color: 0.0, 0.478, 1.0, 1  # iOS Blue Cursor
+                foreground_color: 0.11, 0.11, 0.12, 1
+                multiline: False
+                padding: [0, dp(11), 0, dp(11)]
+                background_active: ""
+                background_normal: ""
+                background_color: 0, 0, 0, 0
+                on_focus: Clock.schedule_once(lambda x: app.input_handler(self, search_container), .15)
+                on_text: root.search(self.text)
+
+    # Smooth List
+    HuxRecycleView:
+        id: rv
+        viewclass: "IconRow"
+        do_scroll_x: False
+        bar_width: dp(4)
+        bar_color: 0.7, 0.7, 0.72, 0.6  # iOS Style Thin Scrollbar
+        bar_inactive_color: 0, 0, 0, 0
+        scroll_type: ['content', 'bars']
+        
+        RecycleBoxLayout:
+            default_size: None, dp(72)
+            default_size_hint: 1, None
+            size_hint_y: None
+            height: self.minimum_height
+            orientation: "vertical"
+            spacing: dp(6)
+            padding: [0, dp(8), 0, dp(16)]
+

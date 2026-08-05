@@ -1,0 +1,20 @@
+{
+    "exclude_dirs":[
+        "env",
+        "venv",
+        "__pycache__",
+        "build",
+        "dist"
+    ],
+    "exclude_files":[
+        ".gitignore",
+        "Material_Icon_WINDOWS_0.1.0_Setup.exe"
+    ],
+    "ignore_pattern":[
+        ".gitignore",
+        ".spec",
+        ".exe",
+        ".pyc"
+    ]
+
+}
